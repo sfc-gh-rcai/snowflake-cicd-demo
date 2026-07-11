@@ -5,13 +5,13 @@ default_target: DEV
 targets:
   DEV:
     account_identifier: SFSEAPAC-DEMO_RCAI_AWS_US_WEST_2
-    project_name: COCO_DEMO.PUBLIC.CICD_DEMO_PROJECT
+    project_name: DCM_PROJECTS.PUBLIC.CICD_DEMO_PROJECT
     project_owner: ACCOUNTADMIN
     templating_config: DEV
 
   PROD:
     account_identifier: SFSEAPAC-DEMO_RCAI_AWS_US_WEST_2
-    project_name: COCO_DEMO.PUBLIC.CICD_DEMO_PROJECT
+    project_name: DCM_PROJECTS.PUBLIC.CICD_DEMO_PROJECT
     project_owner: ACCOUNTADMIN
     templating_config: PROD
 
