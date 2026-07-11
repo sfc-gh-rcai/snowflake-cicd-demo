@@ -29,6 +29,7 @@ jobs:
         run: snow connection test -x
 
       - name: Plan changes (DEV)
+        working-directory: dcm
         run: snow dcm plan --target DEV -x
 
   deploy-on-merge:
@@ -48,4 +49,5 @@ jobs:
         run: snow connection test -x
 
       - name: Deploy to PROD
+        working-directory: dcm
         run: snow dcm deploy --target PROD -x
