@@ -9,8 +9,7 @@ on:
 env:
   SNOWFLAKE_ACCOUNT: ${{ vars.SNOWFLAKE_ACCOUNT }}
   SNOWFLAKE_USER: ${{ vars.SNOWFLAKE_USER }}
-  SNOWFLAKE_AUTHENTICATOR: SNOWFLAKE_JWT
-  SNOWFLAKE_PRIVATE_KEY_RAW: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_RAW }}
+  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
 
 jobs:
   plan-on-pr:
@@ -19,11 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - uses: Snowflake-Labs/snowflake-cli-action@v1
+      - uses: snowflakedb/snowflake-cli-action@v2.0
         with:
           cli-version: "latest"
-          default-config-file-path: "config.toml"
 
       - name: Test connection
         run: snow connection test -x
@@ -37,11 +37,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - uses: Snowflake-Labs/snowflake-cli-action@v1
+      - uses: snowflakedb/snowflake-cli-action@v2.0
         with:
           cli-version: "latest"
-          default-config-file-path: "config.toml"
 
       - name: Test connection
         run: snow connection test -x
