@@ -1,0 +1,26 @@
+project_definition_version: 2
+
+targets:
+  DEV:
+    project_name: CICD_DEMO_ANALYTICS_DB.PUBLIC.CICD_DEMO_PROJECT
+    project_owner: CICD_DEMO_DEPLOYER
+    templating_config: DEV
+
+  PROD:
+    project_name: CICD_DEMO_ANALYTICS_DB.PUBLIC.CICD_DEMO_PROJECT
+    project_owner: CICD_DEMO_DEPLOYER
+    templating_config: PROD
+
+templating:
+  configurations:
+    DEV:
+      env: "DEV"
+      wh_size: "X-SMALL"
+      db_name: "CICD_DEMO_ANALYTICS_DEV"
+      target_lag: "1 hour"
+
+    PROD:
+      env: "PROD"
+      wh_size: "MEDIUM"
+      db_name: "CICD_DEMO_ANALYTICS_PROD"
+      target_lag: "5 minutes"

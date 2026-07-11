@@ -1,0 +1,5 @@
+DEFINE SCHEMA {{ db_name }}.RAW;
+
+DEFINE SCHEMA {{ db_name }}.TRANSFORMED;
+
+DEFINE SCHEMA {{ db_name }}.PRESENTATION;

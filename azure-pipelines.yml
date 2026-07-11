@@ -1,0 +1,77 @@
+# Azure DevOps Pipeline - Snowflake CI/CD
+# This is the Azure DevOps equivalent of the GitHub Actions workflow.
+# Uses the Snowflake CLI Azure DevOps Extension (Public Preview).
+#
+# Prerequisites:
+# 1. Install "Snowflake CLI" extension from Azure DevOps Marketplace
+# 2. Set pipeline variables: SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER
+# 3. Set secret variable: SNOWFLAKE_PRIVATE_KEY_RAW
+# 4. (Recommended) Configure OIDC workload identity federation
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  SNOWFLAKE_ACCOUNT: $(SNOWFLAKE_ACCOUNT)
+  SNOWFLAKE_USER: $(SNOWFLAKE_USER)
+  SNOWFLAKE_AUTHENTICATOR: SNOWFLAKE_JWT
+
+stages:
+  - stage: Plan
+    displayName: "Plan (Preview Changes)"
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - job: PlanDev
+        displayName: "Plan DEV Changes"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+
+          - task: SnowflakeCLI@1
+            displayName: "Install Snowflake CLI"
+            inputs:
+              version: "latest"
+
+          - script: snow connection test -x
+            displayName: "Test Snowflake Connection"
+            env:
+              SNOWFLAKE_PRIVATE_KEY_RAW: $(SNOWFLAKE_PRIVATE_KEY_RAW)
+
+          - script: snow dcm plan --target DEV -x
+            displayName: "Plan DCM Changes (DEV)"
+            env:
+              SNOWFLAKE_PRIVATE_KEY_RAW: $(SNOWFLAKE_PRIVATE_KEY_RAW)
+
+  - stage: Deploy
+    displayName: "Deploy to PROD"
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - job: DeployProd
+        displayName: "Deploy PROD"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+
+          - task: SnowflakeCLI@1
+            displayName: "Install Snowflake CLI"
+            inputs:
+              version: "latest"
+
+          - script: snow connection test -x
+            displayName: "Test Snowflake Connection"
+            env:
+              SNOWFLAKE_PRIVATE_KEY_RAW: $(SNOWFLAKE_PRIVATE_KEY_RAW)
+
+          - script: snow dcm deploy --target PROD -x
+            displayName: "Deploy DCM Project (PROD)"
+            env:
+              SNOWFLAKE_PRIVATE_KEY_RAW: $(SNOWFLAKE_PRIVATE_KEY_RAW)
