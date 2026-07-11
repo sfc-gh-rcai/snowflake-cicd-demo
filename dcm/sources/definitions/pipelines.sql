@@ -1,4 +1,5 @@
-DEFINE TABLE {{ db_name }}.RAW.ORDERS (
+{% for e in environments %}
+DEFINE TABLE {{ e.db_name }}.RAW.ORDERS (
   order_id NUMBER,
   customer_id NUMBER,
   order_date TIMESTAMP_NTZ,
@@ -10,9 +11,9 @@ DEFINE TABLE {{ db_name }}.RAW.ORDERS (
   loaded_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
 );
 
-DEFINE DYNAMIC TABLE {{ db_name }}.TRANSFORMED.CLEANED_ORDERS
-  TARGET_LAG = '{{ target_lag }}'
-  WAREHOUSE = CICD_DEMO_WH_{{ env }}
+DEFINE DYNAMIC TABLE {{ e.db_name }}.TRANSFORMED.CLEANED_ORDERS
+  TARGET_LAG = '{{ e.target_lag }}'
+  WAREHOUSE = CICD_DEMO_WH_{{ e.env }}
   AS
     SELECT
       order_id,
@@ -25,13 +26,13 @@ DEFINE DYNAMIC TABLE {{ db_name }}.TRANSFORMED.CLEANED_ORDERS
       UPPER(TRIM(status)) AS status,
       UPPER(TRIM(region)) AS region,
       loaded_at
-    FROM {{ db_name }}.RAW.ORDERS
+    FROM {{ e.db_name }}.RAW.ORDERS
     WHERE order_id IS NOT NULL
       AND quantity > 0;
 
-DEFINE DYNAMIC TABLE {{ db_name }}.PRESENTATION.ORDER_SUMMARY
-  TARGET_LAG = '{{ target_lag }}'
-  WAREHOUSE = CICD_DEMO_WH_{{ env }}
+DEFINE DYNAMIC TABLE {{ e.db_name }}.PRESENTATION.ORDER_SUMMARY
+  TARGET_LAG = '{{ e.target_lag }}'
+  WAREHOUSE = CICD_DEMO_WH_{{ e.env }}
   AS
     SELECT
       region,
@@ -40,6 +41,7 @@ DEFINE DYNAMIC TABLE {{ db_name }}.PRESENTATION.ORDER_SUMMARY
       SUM(total_amount) AS total_revenue,
       AVG(total_amount) AS avg_order_value,
       COUNT(DISTINCT customer_id) AS unique_customers
-    FROM {{ db_name }}.TRANSFORMED.CLEANED_ORDERS
+    FROM {{ e.db_name }}.TRANSFORMED.CLEANED_ORDERS
     WHERE status = 'COMPLETED'
     GROUP BY region, DATE_TRUNC('day', order_date);
+{% endfor %}

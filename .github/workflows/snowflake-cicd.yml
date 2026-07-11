@@ -28,12 +28,12 @@ jobs:
       - name: Test connection
         run: snow connection test -x
 
-      - name: Plan changes (DEV)
+      - name: Plan changes
         working-directory: dcm
-        run: snow dcm plan --target DEV -x
+        run: snow dcm plan --target DEMO -x
 
   deploy-on-merge:
-    name: Deploy to PROD
+    name: Deploy
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -48,6 +48,6 @@ jobs:
       - name: Test connection
         run: snow connection test -x
 
-      - name: Deploy to PROD
+      - name: Deploy
         working-directory: dcm
-        run: snow dcm deploy --target PROD -x
+        run: snow dcm deploy --target DEMO -x
