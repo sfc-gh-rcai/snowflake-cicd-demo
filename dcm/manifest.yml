@@ -1,23 +1,33 @@
 manifest_version: 2
 type: DCM_PROJECT
-default_target: DEMO
+default_target: DEV
 
 targets:
-  DEMO:
+  DEV:
     account_identifier: SFSEAPAC-DEMO_RCAI_AWS_US_WEST_2
-    project_name: DCM_PROJECTS.PUBLIC.CICD_DEMO_PROJECT
+    project_name: DCM_PROJECTS.PUBLIC.CICD_DEMO_PROJECT_DEV
     project_owner: ACCOUNTADMIN
-    templating_config: DEMO
+    templating_config: DEV
+
+  PROD:
+    account_identifier: SFSEAPAC-DEMO_RCAI_AWS_US_WEST_2
+    project_name: DCM_PROJECTS.PUBLIC.CICD_DEMO_PROJECT_PROD
+    project_owner: ACCOUNTADMIN
+    templating_config: PROD
 
 templating:
+  defaults:
+    db_name: "CICD_DEMO_ANALYTICS"
+
   configurations:
-    DEMO:
-      environments:
-        - env: "DEV"
-          wh_size: "X-SMALL"
-          db_name: "CICD_DEMO_ANALYTICS_DEV"
-          target_lag: "1 hour"
-        - env: "PROD"
-          wh_size: "MEDIUM"
-          db_name: "CICD_DEMO_ANALYTICS_PROD"
-          target_lag: "5 minutes"
+    DEV:
+      env: "DEV"
+      wh_size: "X-SMALL"
+      db_name: "CICD_DEMO_ANALYTICS_DEV"
+      target_lag: "1 hour"
+
+    PROD:
+      env: "PROD"
+      wh_size: "MEDIUM"
+      db_name: "CICD_DEMO_ANALYTICS_PROD"
+      target_lag: "5 minutes"
