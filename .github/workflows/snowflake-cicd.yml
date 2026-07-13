@@ -6,10 +6,13 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   SNOWFLAKE_ACCOUNT: ${{ vars.SNOWFLAKE_ACCOUNT }}
-  SNOWFLAKE_USER: ${{ vars.SNOWFLAKE_USER }}
-  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+  SNOWFLAKE_USER: CICD_DEMO_GITHUB_USER
 
 jobs:
   plan-on-pr:
@@ -22,6 +25,8 @@ jobs:
           persist-credentials: false
 
       - uses: snowflakedb/snowflake-cli-action@v2.0
+        with:
+          use-oidc: true
 
       - name: Test connection
         run: snow connection test -x
@@ -40,6 +45,8 @@ jobs:
           persist-credentials: false
 
       - uses: snowflakedb/snowflake-cli-action@v2.0
+        with:
+          use-oidc: true
 
       - name: Test connection
         run: snow connection test -x
