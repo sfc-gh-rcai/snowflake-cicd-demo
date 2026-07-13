@@ -33,7 +33,7 @@ jobs:
 
       - name: Plan changes
         working-directory: dcm
-        run: snow dcm plan --target DEMO -x
+        run: snow dcm plan --target DEV -x
 
   deploy-on-merge:
     name: Deploy
@@ -53,4 +53,4 @@ jobs:
 
       - name: Deploy
         working-directory: dcm
-        run: snow dcm deploy --target DEMO -x
+        run: snow dcm deploy --target DEV -x
