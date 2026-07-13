@@ -22,8 +22,6 @@ jobs:
           persist-credentials: false
 
       - uses: snowflakedb/snowflake-cli-action@v2.0
-        with:
-          cli-version: "latest"
 
       - name: Test connection
         run: snow connection test -x
@@ -42,8 +40,6 @@ jobs:
           persist-credentials: false
 
       - uses: snowflakedb/snowflake-cli-action@v2.0
-        with:
-          cli-version: "latest"
 
       - name: Test connection
         run: snow connection test -x
