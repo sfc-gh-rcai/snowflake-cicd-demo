@@ -43,3 +43,20 @@ DEFINE DYNAMIC TABLE {{ db_name }}.PRESENTATION.ORDER_SUMMARY
     FROM {{ db_name }}.TRANSFORMED.CLEANED_ORDERS
     WHERE status = 'COMPLETED'
     GROUP BY region, DATE_TRUNC('day', order_date);
+
+
+DEFINE DYNAMIC TABLE {{ db_name }}.PRESENTATION.ORDER_SUMMARY_TABLE2
+  TARGET_LAG = '{{ target_lag }}'
+  WAREHOUSE = CICD_DEMO_WH_{{ env }}
+  AS
+    SELECT
+      region,
+      DATE_TRUNC('day', order_date) AS order_day,
+      COUNT(*) AS total_orders,
+      SUM(total_amount) AS total_revenue,
+      AVG(total_amount) AS avg_order_value,
+      COUNT(DISTINCT customer_id) AS unique_customers
+    FROM {{ db_name }}.TRANSFORMED.CLEANED_ORDERS
+    WHERE status = 'COMPLETED'
+    GROUP BY region, DATE_TRUNC('day', order_date);
+
